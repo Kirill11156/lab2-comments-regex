@@ -3,7 +3,13 @@
 import re
 
 # однострочные коментарии (# или //)
-ANY_COMMENT = re.compile(r"#.*|//.*")
+ONE_LINE = re.compile(r"#.*|//.*")
+
+# многострочные /* ... */
+MULTI_LINE = re.compile(r"/\*.*?\*/")
+
+# всё вместе для поиска
+ANY_COMMENT = re.compile(r"#.*|//.*|/\*.*?\*/")
 
 
 def is_comment(line):
@@ -11,7 +17,7 @@ def is_comment(line):
     s = line.strip()
     if not s:
         return False
-    return bool(re.fullmatch(ANY_COMMENT, s))
+    return bool(re.fullmatch(ONE_LINE, s)) or bool(re.fullmatch(MULTI_LINE, s))
 
 
 def find_comments(text):
@@ -19,6 +25,7 @@ def find_comments(text):
     result = []
     for m in ANY_COMMENT.finditer(text):
         line_no = text.count("\n", 0, m.start()) + 1
+        print("debug:", m.group())  # потом уберу
         result.append((m.group(), line_no))
     return result
 
