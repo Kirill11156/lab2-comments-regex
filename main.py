@@ -5,11 +5,11 @@ import re
 # однострочные коментарии (# или //)
 ONE_LINE = re.compile(r"#.*|//.*")
 
-# многострочные /* ... */
-MULTI_LINE = re.compile(r"/\*.*?\*/")
+# многострочные /* ... */ ([\s\S] потому что точка не берёт перенос строки)
+MULTI_LINE = re.compile(r"/\*[\s\S]*?\*/")
 
 # всё вместе для поиска
-ANY_COMMENT = re.compile(r"#.*|//.*|/\*.*?\*/")
+ANY_COMMENT = re.compile(r"#.*|//.*|/\*[\s\S]*?\*/")
 
 
 def is_comment(line):
@@ -25,7 +25,6 @@ def find_comments(text):
     result = []
     for m in ANY_COMMENT.finditer(text):
         line_no = text.count("\n", 0, m.start()) + 1
-        print("debug:", m.group())  # потом уберу
         result.append((m.group(), line_no))
     return result
 
